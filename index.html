@@ -1,0 +1,117 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentinel Activity Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #030712;
+            --text-color: #f8fafc;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --star-color: rgba(255, 255, 255, 0.05);
+            --accent: #475569; /* Slate 600 */
+            --accent-light: #64748b; /* Slate 500 */
+            --accent-dark: #334155; /* Slate 700 */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1), color 0.5s ease;
+        }
+
+        body.light-mode {
+            --bg-color: #f8fafc;
+            --text-color: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.8);
+            --glass-border: rgba(0, 0, 0, 0.08);
+            --star-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        .light-mode ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            transition: background 0.5s ease, border 0.5s ease;
+        }
+
+        .glow-accent {
+            box-shadow: 0 0 20px 2px rgba(71, 85, 105, 0.2);
+        }
+
+        .star-bg {
+            background-image: radial-gradient(circle at 1px 1px, var(--star-color) 1px, transparent 0);
+            background-size: 40px 40px;
+            transition: background-image 0.5s ease;
+        }
+
+        /* Utility Overrides for Light Mode */
+        .light-mode .text-slate-400, .light-mode .text-slate-500 {
+            color: #64748b;
+        }
+        .light-mode .text-slate-600 {
+            color: #475569;
+        }
+        .light-mode .bg-white\/5 {
+            background-color: rgba(0, 0, 0, 0.04);
+        }
+        .light-mode .border-white\/10, .light-mode .border-white\/5 {
+            border-color: rgba(0, 0, 0, 0.08);
+        }
+        
+        /* Replace Indigo with Slate */
+        .bg-indigo-500 { background-color: var(--accent) !important; }
+        .bg-indigo-600 { background-color: var(--accent-dark) !important; }
+        .text-indigo-400 { color: var(--accent-light) !important; }
+        .text-indigo-500 { color: var(--accent) !important; }
+        .border-indigo-500 { border-color: var(--accent) !important; }
+        .ring-indigo-500 { --tw-ring-color: var(--accent) !important; }
+        .bg-indigo-500\/10 { background-color: rgba(71, 85, 105, 0.1) !important; }
+        .bg-indigo-500\/20 { background-color: rgba(71, 85, 105, 0.2) !important; }
+        .bg-indigo-500\/5 { background-color: rgba(71, 85, 105, 0.05) !important; }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2.45.1"
+  }
+}
+</script>
+</head>
+<body class="star-bg">
+    <div id="root"></div>
+</body>
+</html>
