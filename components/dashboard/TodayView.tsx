@@ -12,6 +12,7 @@ interface TodayViewProps {
   onUpdateLog: (id: string, value: any) => void;
   onDeleteLog: (id: string) => void;
   onDeleteActivity: (id: string) => void;
+  onUpdateActivity: (activity: Activity) => void;
   onUpdateActivities: (activities: Activity[]) => void;
   onAddSection: (name: string) => void;
   onDeleteSection: (id: string) => void;
@@ -19,7 +20,7 @@ interface TodayViewProps {
 }
 
 const TodayView: React.FC<TodayViewProps> = ({ 
-  activities, logs, sections, onAddLog, onUpdateLog, onDeleteLog, onDeleteActivity, onUpdateActivities, onAddSection, onDeleteSection, onUpdateSections 
+  activities, logs, sections, onAddLog, onUpdateLog, onDeleteLog, onDeleteActivity, onUpdateActivity, onUpdateActivities, onAddSection, onDeleteSection, onUpdateSections 
 }) => {
   const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null);
   const [activeTimers, setActiveTimers] = useState<Record<string, number>>({});
@@ -213,14 +214,45 @@ const TodayView: React.FC<TodayViewProps> = ({
 
   const handleActivityDrop = (e: React.DragEvent, targetId: string, targetSectionName: string) => {
     e.preventDefault();
-    if (!draggedActivityId || draggedActivityId === targetId) return;
+    if (!draggedActivityId) return;
+    
+    const draggedActivity = activities.find(a => a.id === draggedActivityId);
+    if (!draggedActivity) return;
+    
     const newActivities = [...activities];
     const dragIdx = newActivities.findIndex(a => a.id === draggedActivityId);
     const targetIdx = newActivities.findIndex(a => a.id === targetId);
-    const [removed] = newActivities.splice(dragIdx, 1);
-    removed.section = targetSectionName;
-    newActivities.splice(targetIdx, 0, removed);
-    onUpdateActivities(newActivities.map((a, i) => ({ ...a, orderIndex: i })));
+    
+    if (dragIdx === -1 || targetIdx === -1) {
+      setDraggedActivityId(null);
+      return;
+    }
+    
+    // Wenn die Aktivität in einen anderen Abschnitt verschoben wird
+    if (draggedActivity.section !== targetSectionName) {
+      const updatedActivity = { ...draggedActivity, section: targetSectionName };
+      onUpdateActivity(updatedActivity);
+      setDraggedActivityId(null);
+      return;
+    }
+    
+    // Wenn die Aktivität innerhalb des gleichen Abschnitts verschoben wird (Reihenfolge ändern)
+    if (draggedActivityId !== targetId && newActivities[dragIdx].section === newActivities[targetIdx].section) {
+      const [removed] = newActivities.splice(dragIdx, 1);
+      newActivities.splice(targetIdx, 0, removed);
+      
+      // Aktualisiere orderIndex für alle Aktivitäten im Abschnitt
+      const sectionName = newActivities[targetIdx].section;
+      const sectionActivities = newActivities
+        .filter(a => a.section === sectionName)
+        .map((activity, index) => ({ ...activity, orderIndex: index }));
+      
+      // Aktualisiere alle Aktivitäten im Abschnitt in der Datenbank
+      sectionActivities.forEach(activity => {
+        onUpdateActivity(activity);
+      });
+    }
+    
     setDraggedActivityId(null);
   };
 
@@ -229,11 +261,11 @@ const TodayView: React.FC<TodayViewProps> = ({
     if (draggedActivityId) {
       const targetSec = displaySections.find(s => s.id === targetSectionId);
       if (!targetSec) return;
-      const newActivities = [...activities];
-      const activity = newActivities.find(a => a.id === draggedActivityId);
-      if (activity) {
-        activity.section = targetSec.name;
-        onUpdateActivities(newActivities.map((a, i) => ({ ...a, orderIndex: i })));
+      const activity = activities.find(a => a.id === draggedActivityId);
+      if (activity && activity.section !== targetSec.name) {
+        // Aktualisiere die Aktivität permanent in der Datenbank
+        const updatedActivity = { ...activity, section: targetSec.name };
+        onUpdateActivity(updatedActivity);
       }
       setDraggedActivityId(null);
     } 
