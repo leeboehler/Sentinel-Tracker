@@ -53,10 +53,10 @@ const Dashboard: React.FC<DashboardProps> = (props) => {
 
   const navItems = [
     { id: 'today', label: 'Heute', icon: LayoutGrid },
+    { id: 'journal', label: 'Tagebuch', icon: Calendar },
     { id: 'stats', label: 'Woche', icon: BarChart3 },
     { id: 'all', label: 'Liste', icon: List },
     { id: 'goals', label: 'Ziele', icon: Target },
-    { id: 'journal', label: 'Journal', icon: Calendar },
   ];
 
   return (
