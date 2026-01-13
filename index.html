@@ -43,6 +43,15 @@
             font-family: 'Playfair Display', serif;
         }
 
+        /* Utility Classes */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
         ::-webkit-scrollbar {
             width: 6px;
         }
@@ -64,49 +73,27 @@
             transition: background 0.5s ease, border 0.5s ease;
         }
 
-        .glow-accent {
-            box-shadow: 0 0 20px 2px rgba(71, 85, 105, 0.2);
-        }
-
         .star-bg {
             background-image: radial-gradient(circle at 1px 1px, var(--star-color) 1px, transparent 0);
             background-size: 40px 40px;
             transition: background-image 0.5s ease;
         }
 
-        /* Utility Overrides for Light Mode */
         .light-mode .text-slate-400, .light-mode .text-slate-500 {
             color: #64748b;
         }
-        .light-mode .text-slate-600 {
-            color: #475569;
-        }
-        .light-mode .bg-white\/5 {
-            background-color: rgba(0, 0, 0, 0.04);
-        }
-        .light-mode .border-white\/10, .light-mode .border-white\/5 {
-            border-color: rgba(0, 0, 0, 0.08);
-        }
-        
-        /* Replace Indigo with Slate */
-        .bg-indigo-500 { background-color: var(--accent) !important; }
-        .bg-indigo-600 { background-color: var(--accent-dark) !important; }
-        .text-indigo-400 { color: var(--accent-light) !important; }
-        .text-indigo-500 { color: var(--accent) !important; }
-        .border-indigo-500 { border-color: var(--accent) !important; }
-        .ring-indigo-500 { --tw-ring-color: var(--accent) !important; }
-        .bg-indigo-500\/10 { background-color: rgba(71, 85, 105, 0.1) !important; }
-        .bg-indigo-500\/20 { background-color: rgba(71, 85, 105, 0.2) !important; }
-        .bg-indigo-500\/5 { background-color: rgba(71, 85, 105, 0.05) !important; }
     </style>
 <script type="importmap">
 {
   "imports": {
-    "react": "https://esm.sh/react@^19.2.3",
+    "react": "https://esm.sh/react@19.0.0",
+    "react-dom": "https://esm.sh/react-dom@19.0.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
+    "lucide-react": "https://esm.sh/lucide-react@0.460.0",
+    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2.45.1",
+    "@google/genai": "https://esm.sh/@google/genai@^1.35.0",
     "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
-    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2.45.1"
+    "react/": "https://esm.sh/react@^19.2.3/"
   }
 }
 </script>

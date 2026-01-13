@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Activity, Category, TabType } from '../../types';
-import { Plus, Edit2, Trash2, Search, Settings, GripVertical, Check, X, FolderPlus, AlertCircle } from 'lucide-react';
+import { Plus, Edit2, Trash2, Search, Settings, GripVertical, Check, X, FolderPlus } from 'lucide-react';
 import NewActivityModal from '../Modals/NewActivityModal';
 
 interface AllActivitiesViewProps {
@@ -25,7 +25,7 @@ const AllActivitiesView: React.FC<AllActivitiesViewProps> = ({
   const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   
-  // State für Inline-Löschbestätigung
+  // State für die Löschbestätigung
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const [isAddingCategory, setIsAddingCategory] = useState(false);
@@ -47,8 +47,8 @@ const AllActivitiesView: React.FC<AllActivitiesViewProps> = ({
   const [draggedCategoryId, setDraggedCategoryId] = useState<string | null>(null);
 
   const handleActivityDragStart = (e: React.DragEvent, id: string) => {
-    // Wenn wir gerade im Lösch-Modus sind, Drag verhindern
-    if (deletingId) {
+    // Verhindere Drag, wenn wir gerade im Lösch-Bestätigungsmodus sind
+    if (deletingId === id) {
       e.preventDefault();
       return;
     }
@@ -101,37 +101,23 @@ const AllActivitiesView: React.FC<AllActivitiesViewProps> = ({
     }
   };
 
-  const handleSaveCategory = () => {
-    if (editingCategory) {
-      onUpdateCategory({ ...editingCategory, name: newCategoryName });
-      setEditingCategory(null);
-    } else {
-      onAddCategory(newCategoryName);
-    }
-    setNewCategoryName('');
-    setIsAddingCategory(false);
-  };
-
-  const startEditCategory = (cat: Category) => {
-    setEditingCategory(cat);
-    setNewCategoryName(cat.name);
-    setIsAddingCategory(true);
-  };
-
-  const handleDeleteClick = (e: React.MouseEvent | React.PointerEvent, id: string) => {
-    // Ganz wichtig: Propagation auf allen Ebenen stoppen, damit Drag&Drop oder der Karten-Klick nicht stören
+  // KRITISCHE FUNKTION: Verarbeitet das Löschen sicher
+  const handleActionControl = (e: React.PointerEvent | React.MouseEvent, id: string, action: 'delete' | 'cancel') => {
     e.stopPropagation();
     e.preventDefault();
 
+    if (action === 'cancel') {
+      setDeletingId(null);
+      return;
+    }
+
     if (deletingId === id) {
-      // Zweiter Klick: Löschen ausführen
+      // Zweiter Klick -> Löschen ausführen
       onDeleteActivity(id);
       setDeletingId(null);
     } else {
-      // Erster Klick: In Lösch-Modus wechseln
+      // Erster Klick -> Bestätigungsmodus aktivieren
       setDeletingId(id);
-      // Nach 3 Sekunden zurücksetzen, wenn nicht bestätigt wurde
-      setTimeout(() => setDeletingId(prev => prev === id ? null : prev), 3000);
     }
   };
 
@@ -148,7 +134,7 @@ const AllActivitiesView: React.FC<AllActivitiesViewProps> = ({
             onDragOver={(e) => e.preventDefault()}
             onDrop={(e) => handleActivityDrop(e, activity.id, categoryName)}
             className={`glass p-5 rounded-[1.5rem] flex items-center justify-between transition-all cursor-pointer group relative overflow-hidden ${
-              isConfirming ? 'border-red-500/50 bg-red-500/5' : 'hover:border-white/20 active:bg-white/5'
+              isConfirming ? 'border-red-500/50 bg-red-500/5 ring-1 ring-red-500/20' : 'hover:border-white/20 active:bg-white/5'
             }`}
             onClick={() => { 
               if (!isConfirming) {
@@ -157,44 +143,59 @@ const AllActivitiesView: React.FC<AllActivitiesViewProps> = ({
               }
             }}
           >
-            <div className="flex items-center gap-4 relative z-10">
-              <div className={`text-3xl w-12 h-12 flex items-center justify-center glass rounded-xl shrink-0 transition-transform ${isConfirming ? 'scale-90 opacity-50' : ''}`}>
+            <div className="flex items-center gap-4 relative z-10 pointer-events-none">
+              <div className={`text-3xl w-12 h-12 flex items-center justify-center glass rounded-xl shrink-0 transition-all ${isConfirming ? 'scale-75 opacity-50 grayscale rotate-12' : ''}`}>
                 {activity.emoji}
               </div>
               <div className="min-w-0">
-                <h4 className={`font-semibold truncate transition-colors ${isConfirming ? 'text-red-400' : 'text-slate-200'}`}>
-                  {isConfirming ? 'Löschen?' : activity.title}
+                <h4 className={`font-semibold truncate transition-all ${isConfirming ? 'text-red-400 translate-x-1' : 'text-slate-200'}`}>
+                  {isConfirming ? 'Wirklich löschen?' : activity.title}
                 </h4>
-                <p className="text-[10px] text-slate-500 uppercase tracking-widest">{activity.type}</p>
+                <p className={`text-[10px] uppercase tracking-widest transition-opacity ${isConfirming ? 'opacity-0' : 'text-slate-500'}`}>
+                  {activity.type}
+                </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-1 shrink-0 relative z-20">
-              <button
-                type="button"
-                // Wir nutzen mehrere Event-Handler, um sicherzugehen, dass es überall greift
-                onClick={(e) => handleDeleteClick(e, activity.id)}
-                onPointerDown={(e) => e.stopPropagation()} 
-                onMouseDown={(e) => e.stopPropagation()}
-                className={`p-3 rounded-full transition-all flex items-center justify-center ${
-                  isConfirming 
-                    ? 'bg-red-500 text-white shadow-lg shadow-red-500/40 animate-pulse' 
-                    : 'text-slate-600 hover:text-red-400 bg-white/5 sm:bg-transparent'
-                }`}
-                title={isConfirming ? "Bestätigen zum Löschen" : "Aktivität löschen"}
-              >
-                {isConfirming ? <Check size={20} strokeWidth={3} /> : <Trash2 size={20} />}
-              </button>
-              
-              {!isConfirming && (
-                <div className="p-3 text-slate-600 hover:text-white transition-colors cursor-grab active:cursor-grabbing hidden sm:block">
-                  <GripVertical size={18} />
+            <div className="flex items-center gap-2 shrink-0 relative z-30">
+              {isConfirming ? (
+                <div className="flex items-center gap-2 animate-in slide-in-from-right-2">
+                   <button
+                    type="button"
+                    onPointerDown={(e) => handleActionControl(e, activity.id, 'cancel')}
+                    className="p-3 rounded-full bg-white/10 text-white hover:bg-white/20 transition-all active:scale-90"
+                    title="Abbrechen"
+                  >
+                    <X size={20} />
+                  </button>
+                  <button
+                    type="button"
+                    onPointerDown={(e) => handleActionControl(e, activity.id, 'delete')}
+                    className="p-3 rounded-full bg-red-500 text-white shadow-lg shadow-red-500/40 animate-pulse scale-110 active:scale-95"
+                    title="Löschen bestätigen"
+                  >
+                    <Check size={20} strokeWidth={3} />
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onPointerDown={(e) => handleActionControl(e, activity.id, 'delete')}
+                    className="p-3 rounded-full text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-all active:scale-90"
+                    title="Aktivität löschen"
+                  >
+                    <Trash2 size={20} />
+                  </button>
+                  <div className="p-3 text-slate-700 hover:text-white transition-colors cursor-grab active:cursor-grabbing hidden sm:block">
+                    <GripVertical size={18} />
+                  </div>
                 </div>
               )}
             </div>
             
             {isConfirming && (
-               <div className="absolute inset-0 bg-red-500/5 pointer-events-none animate-in fade-in"></div>
+              <div className="absolute inset-0 bg-red-500/5 pointer-events-none animate-in fade-in"></div>
             )}
           </div>
         );
@@ -206,6 +207,23 @@ const AllActivitiesView: React.FC<AllActivitiesViewProps> = ({
       )}
     </div>
   );
+
+  const handleSaveCategory = () => {
+    if (editingCategory) {
+      onUpdateCategory({ ...editingCategory, name: newCategoryName });
+      setEditingCategory(null);
+    } else {
+      onAddCategory(newCategoryName);
+    }
+    setNewCategoryName('');
+    setIsAddingCategory(false);
+  };
+
+  const startEditCategory = (cat: Category) => {
+    setEditingCategory(cat);
+    setNewCategoryName(cat.name);
+    setIsAddingCategory(true);
+  };
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500 pb-20">
