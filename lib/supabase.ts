@@ -4,7 +4,7 @@ import { createClient } from '@supabase/supabase-js';
 /**
  * Supabase configuration using provided project credentials.
  */
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseUrl = 'https://cltrqihvndklbudwhzmo.supabase.co';
+const supabaseAnonKey = 'sb_publishable_cxY0AL_9ANb-0QBBdLlfxA_xwnCuVT9';
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
