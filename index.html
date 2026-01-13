@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +10,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --bg-color: #030712;
@@ -18,9 +20,12 @@
             --glass-bg: rgba(255, 255, 255, 0.03);
             --glass-border: rgba(255, 255, 255, 0.08);
             --star-color: rgba(255, 255, 255, 0.05);
-            --accent: #475569; /* Slate 600 */
-            --accent-light: #64748b; /* Slate 500 */
-            --accent-dark: #334155; /* Slate 700 */
+            --accent: #475569;
+            /* Slate 600 */
+            --accent-light: #64748b;
+            /* Slate 500 */
+            --accent-dark: #334155;
+            /* Slate 700 */
         }
 
         body {
@@ -46,13 +51,16 @@
         ::-webkit-scrollbar {
             width: 6px;
         }
+
         ::-webkit-scrollbar-track {
             background: transparent;
         }
+
         ::-webkit-scrollbar-thumb {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
         }
+
         .light-mode ::-webkit-scrollbar-thumb {
             background: rgba(0, 0, 0, 0.1);
         }
@@ -75,31 +83,62 @@
         }
 
         /* Utility Overrides for Light Mode */
-        .light-mode .text-slate-400, .light-mode .text-slate-500 {
+        .light-mode .text-slate-400,
+        .light-mode .text-slate-500 {
             color: #64748b;
         }
+
         .light-mode .text-slate-600 {
             color: #475569;
         }
+
         .light-mode .bg-white\/5 {
             background-color: rgba(0, 0, 0, 0.04);
         }
-        .light-mode .border-white\/10, .light-mode .border-white\/5 {
+
+        .light-mode .border-white\/10,
+        .light-mode .border-white\/5 {
             border-color: rgba(0, 0, 0, 0.08);
         }
-        
+
         /* Replace Indigo with Slate */
-        .bg-indigo-500 { background-color: var(--accent) !important; }
-        .bg-indigo-600 { background-color: var(--accent-dark) !important; }
-        .text-indigo-400 { color: var(--accent-light) !important; }
-        .text-indigo-500 { color: var(--accent) !important; }
-        .border-indigo-500 { border-color: var(--accent) !important; }
-        .ring-indigo-500 { --tw-ring-color: var(--accent) !important; }
-        .bg-indigo-500\/10 { background-color: rgba(71, 85, 105, 0.1) !important; }
-        .bg-indigo-500\/20 { background-color: rgba(71, 85, 105, 0.2) !important; }
-        .bg-indigo-500\/5 { background-color: rgba(71, 85, 105, 0.05) !important; }
+        .bg-indigo-500 {
+            background-color: var(--accent) !important;
+        }
+
+        .bg-indigo-600 {
+            background-color: var(--accent-dark) !important;
+        }
+
+        .text-indigo-400 {
+            color: var(--accent-light) !important;
+        }
+
+        .text-indigo-500 {
+            color: var(--accent) !important;
+        }
+
+        .border-indigo-500 {
+            border-color: var(--accent) !important;
+        }
+
+        .ring-indigo-500 {
+            --tw-ring-color: var(--accent) !important;
+        }
+
+        .bg-indigo-500\/10 {
+            background-color: rgba(71, 85, 105, 0.1) !important;
+        }
+
+        .bg-indigo-500\/20 {
+            background-color: rgba(71, 85, 105, 0.2) !important;
+        }
+
+        .bg-indigo-500\/5 {
+            background-color: rgba(71, 85, 105, 0.05) !important;
+        }
     </style>
-<script type="importmap">
+    <script type="importmap">
 {
   "imports": {
     "react": "https://esm.sh/react@^19.2.3",
@@ -111,8 +150,18 @@
 }
 </script>
 </head>
+
 <body class="star-bg">
     <div id="root"></div>
+    <script>
+        window.onerror = function (message, source, lineno, colno, error) {
+            document.body.innerHTML += '<div style="color:red; padding:20px; background:black; z-index:9999; position:fixed; top:0; left:0; width:100%; height:100%; overflow:auto;">' +
+                '<h1>Application Error</h1>' +
+                '<pre>' + message + '\n' + source + ':' + lineno + '</pre>' +
+                '</div>';
+        };
+    </script>
     <script type="module" src="/index.tsx"></script>
 </body>
+
 </html>
